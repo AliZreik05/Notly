@@ -1,0 +1,20 @@
+.navigationBar ul
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.navigationBar .websiteNameNavigation {
+  order: 1;
+}
+.navigationBar .buttonNavigation {
+  order: 2;
+}
+.signUpButton
+{
+    background-color: black;
+    color: white;
+}
