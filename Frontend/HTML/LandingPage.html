@@ -1,20 +1,31 @@
 
 <head>
-<link rel="stylesheet" href="./CSS/LandingPage.css">    
+<link rel="stylesheet" href="./CSS/LandingPage.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="navigationBar">
         <ul>
                 <li class="websiteNameNavigation">
-                    <button><a href="/">Notly</a></button>
+                    <button class="websiteNameButton"  onclick="window.location.href='/'">Notly</button> 
                 </li>
                 <li class="buttonNavigation"> 
-                    <button class="notesButton">Notes<a href="/"></a></button> 
-                    <button class="flashCardsButton">FlashCards<a href="/"></a></button>
-                    <button class="loginButton">Login<a href="/"></a> </button>
-                    <button class="signUpButton">Sign up<a href="/"></a></button>
+                    <button class="notesButton" onclick="window.location.href='/Notes'">Notes</button> 
+                    <button class="flashCardsButton"  onclick="window.location.href='/FlashCards'">FlashCards</button>
+                    <button class="loginButton"  onclick="window.location.href='/login'">Login</a> </button>
+                    <button class="signUpButton"  onclick="window.location.href='/signup'">Sign up</button>
                 </li>
-                
         </ul>
     </nav>
+    <div class="websiteContent">
+        <div class="websiteInfo">
+            <p class="websiteSlogan">Take notes. Generate flashcards. Learn faster. One app for all your studying.</p>
+            <p class="websiteDescription">A smart study platform that lets you take clean, structured notes and automatically turns them into high-quality flashcards and quizzes using AI — so you can study and retain information more efficiently, all in one place.</p>
+        </div>
+        <div class="websiteImage">
+            <img src="../Media/notlyLogo.png" alt="logo of Notly" class="websiteLogo">
+        </div>
+    </div>
 </body>

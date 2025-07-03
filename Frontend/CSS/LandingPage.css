@@ -1,3 +1,4 @@
+
 .navigationBar ul
 {
     list-style: none;
@@ -6,15 +7,142 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid gray;
+    height: 50px;
+   
 }
 .navigationBar .websiteNameNavigation {
+  margin-top: 10px;
   order: 1;
 }
 .navigationBar .buttonNavigation {
+  margin-top: 10px;
   order: 2;
 }
+.websiteNameButton
+{
+    background-color:white;
+    border: 0;
+   font-size: 20px;
+    text-align: left;
+    letter-spacing: 2px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-left: 55px;
+}
+
+.websiteNameButton:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.notesButton
+{
+    background-color: white;
+    border: 0;
+    font-size: 20px;
+    text-align: left;
+    letter-spacing: 2px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+
+}
+.notesButton:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.flashCardsButton
+{
+    background-color: white;
+    border: 0;
+    font-size: 20px;
+    text-align: left;
+    letter-spacing: 2px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+
+}
+.flashCardsButton:hover {
+    cursor: pointer;
+    text-decoration: underline;
+} 
+
+.loginButton
+{
+    background-color: white;
+    border: 0;
+    font-size: 20px;
+    text-align: left;
+    letter-spacing: 2px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+.loginButton:hover {
+    cursor: pointer;
+    text-decoration: underline; 
+}
+
 .signUpButton
 {
     background-color: black;
     color: white;
+     font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-style: bold;
+    font-size: 20px;
+}
+.signUpButton:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.websiteContent
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 120px;
+    margin-left: 120px;
+    height: 50vh;
+    animation-name: rotate;
+    animation-duration: 1s;
+}
+.websiteInfo, 
+.websiteImage {
+  flex: 1;                      
+}
+.websiteSlogan
+{
+    font-size: 64px;
+    text-align: left;
+    margin-top: 70px;
+    letter-spacing: 2px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-style: bold;
+
+}
+.websiteDescription
+{
+    font-size: 20px;
+    text-align: left;
+    margin-top: 20px;
+    letter-spacing: 2px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+.websiteImage img {
+  max-width: 100%;              
+  height: auto;
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
