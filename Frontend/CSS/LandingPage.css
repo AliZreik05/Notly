@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid gray;
-    height: 50px;
+    height: 70px;
    
 }
 .navigationBar .websiteNameNavigation {
@@ -19,33 +19,35 @@
   margin-top: 10px;
   order: 2;
 }
+.buttonNavigation
+{
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
 .websiteNameButton
 {
-    background-color:white;
-    border: 0;
-   font-size: 20px;
-    text-align: left;
-    letter-spacing: 2px;
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    margin-left: 55px;
-}
-
-.websiteNameButton:hover {
+    background: none;
+    border: none;
+    padding: 0;
     cursor: pointer;
-    text-decoration: underline;
+}
+.websiteNameButton .websiteLogo
+{
+    height: 37px;
+    width: auto;
+    display: block;
 }
 
 .notesButton
 {
     background-color: white;
     border: 0;
-    font-size: 20px;
+    font-size: 16px;
     text-align: left;
     letter-spacing: 2px;
     font-family: "Inter", sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-style: normal;
 
 }
@@ -58,11 +60,11 @@
 {
     background-color: white;
     border: 0;
-    font-size: 20px;
+    font-size: 16px;
     text-align: left;
     letter-spacing: 2px;
     font-family: "Inter", sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-style: normal;
 
 }
@@ -75,11 +77,11 @@
 {
     background-color: white;
     border: 0;
-    font-size: 20px;
+    font-size: 16px;
     text-align: left;
     letter-spacing: 2px;
     font-family: "Inter", sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-style: normal;
 }
 .loginButton:hover {
@@ -94,7 +96,11 @@
      font-family: "Inter", sans-serif;
     font-weight: 500;
     font-style: bold;
-    font-size: 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    height: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .signUpButton:hover {
     cursor: pointer;
@@ -117,7 +123,7 @@
 }
 .websiteSlogan
 {
-    font-size: 64px;
+    font-size: 55px;
     text-align: left;
     margin-top: 70px;
     letter-spacing: 2px;
@@ -137,14 +143,15 @@
     font-style: normal;
 }
 .websiteInfo {
-  flex: 2;                     
+  flex: 1;                     
   padding-right: 40px;
 }
 .websiteImage {
-  flex: 1;                     
-  max-width: 500px;            
+  flex: 2;        
+  max-width: 400px;            
   display: flex;
   justify-content: flex-end;
+  margin-top: 60px;
 }
 .websiteImage img {
   max-width: 100%;              
