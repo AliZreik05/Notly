@@ -51,7 +51,7 @@ class FlashCardDeck(Base):
 class FlashCard(Base):
     __tablename__ = "flashcard"
     id = Column(Integer, primary_key=True, index=True)
-    set_id = Column(Integer, ForeignKey("flashcard_sets.id"))
+    set_id = Column(Integer, ForeignKey("flashcard_deck.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     prompt = Column(Text, nullable=False)
@@ -72,9 +72,9 @@ class Exam(Base):
     questions = relationship("ExamQuestion", back_populates="exam", cascade="all, delete")
 
 class ExamQuestion(Base):
-    __tablename__ = "exam"
+    __tablename__ = "examQuestion"
     id = Column(Integer, primary_key=True, index=True)
-    exam_id = Column(Integer, ForeignKey("exams.id"), index=True, nullable=False)
+    exam_id = Column(Integer, ForeignKey("exam.id"), index=True, nullable=False)
     question = Column(Text, nullable=False)
     options = Column(JSON, nullable=False)  
     answer_idx = Column(Integer, nullable=False)
