@@ -1,12 +1,30 @@
-from fastapi import FastAPI;
-from Routes import FlashCardGenerator, QuizGenerator, LectureTranscriber, NotesSummarizer, SignIn, SignUp, Home
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from db.sessions import engine, Base
 
-app = FastAPI()
+from Routes.Home import router as home_router
+from Routes.SignUp import router as signup_router
+from Routes.SignOut import router as signout_router
+from Routes.SignIn import router as signin_router
+from Routes.QuizGenerator import router as quiz_router
+from Routes.FlashCardGenerator import router as flash_router
+from Routes.LectureTranscriber import router as lecture_router
+from Routes.NotesSummarizer import router as notes_router
 
-app.include_router(Home.router, prefix="/Home", tags=["Home"])
-app.include_router(SignUp.router, prefix="/SignUp", tags=["SignUp"])
-app.include_router(SignIn.router, prefix="/SignIn", tags=["SignIn"])
-app.include_router(QuizGenerator.router, prefix="/QuizGenerator", tags=["QuizGenerator"])
-app.include_router(FlashCardGenerator.router, prefix="/FlashCardGenerator", tags=["FlashCardGenerator"])
-app.include_router(LectureTranscriber.router, prefix="/LectureTranscriber", tags=["LectureTranscriber"])
-app.include_router(NotesSummarizer.router, prefix="/NotesSummarizer", tags=["NotesSummarizer"])
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    print("Database tables created successfully")
+    yield
+    print("Application is shutting down")
+
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(home_router)
+app.include_router(signup_router)
+app.include_router(signout_router)
+app.include_router(signin_router)
+app.include_router(quiz_router)
+app.include_router(flash_router)
+app.include_router(lecture_router)
+app.include_router(notes_router)

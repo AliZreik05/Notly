@@ -1,0 +1,87 @@
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum, Text, JSON
+from sqlalchemy.orm import relationship
+import enum
+from db.sessions import Base
+
+class SourceType(str, enum.Enum):
+    note = "note"
+    transcript = "transcript"
+    manual = "manual"
+
+class ExamSource(str, enum.Enum):
+    note = "note"
+    transcript = "transcript"
+    manual = "manual"
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    firstName = Column(String(255),nullable=False)
+    lastName = Column(String(255),nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    notes = relationship("Note", back_populates="owner")
+    quizes = relationship("Quiz", back_populates="owner")
+    flashcards = relationship("FlashCards", back_populates="owner")
+    
+
+class Note(Base):
+    __tablename__ = "notes"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String(255), nullable=False)
+    content = Column(String(2000), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    owner = relationship("User", back_populates="notes")
+
+class FlashCardDeck(Base):
+    __tablename__ = "flashcard_deck"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String(255), nullable=False)
+    source_type = Column(Enum(SourceType), nullable=False)
+    source_id = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    cards = relationship("Flashcard", back_populates="set", cascade="all, delete")
+
+class FlashCard(Base):
+    __tablename__ = "flashcard"
+    id = Column(Integer, primary_key=True, index=True)
+    set_id = Column(Integer, ForeignKey("flashcard_sets.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    prompt = Column(Text, nullable=False)
+    answer = Column(Text, nullable=False)
+
+    set = relationship("FlashcardSet", back_populates="cards")
+
+class Exam(Base):
+    __tablename__ = "exam"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    grade = Column(Integer)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    title = Column(String(255), nullable=False)
+    source_type = Column(Enum(ExamSource), nullable=False)
+    source_id = Column(Integer, nullable=True)
+
+    questions = relationship("ExamQuestion", back_populates="exam", cascade="all, delete")
+
+class ExamQuestion(Base):
+    __tablename__ = "exam"
+    id = Column(Integer, primary_key=True, index=True)
+    exam_id = Column(Integer, ForeignKey("exams.id"), index=True, nullable=False)
+    question = Column(Text, nullable=False)
+    options = Column(JSON, nullable=False)  
+    answer_idx = Column(Integer, nullable=False)
+    points = Column(Integer, default=1)
+    order = Column(Integer, nullable=True)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    exam = relationship("Exam", back_populates="questions")
+

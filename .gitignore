@@ -6,3 +6,5 @@ __pycache__/
 notlybackend/
 
 __pypackages__/
+
+.env
