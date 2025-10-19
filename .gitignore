@@ -4,7 +4,7 @@ __pycache__/
 
 # --- Virtual environment ---
 .venv/
-
+notlybackend/
 # --- Local environment variables ---
 .env
 
