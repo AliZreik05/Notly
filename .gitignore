@@ -7,4 +7,4 @@ notlybackend/
 
 __pypackages__/
 
-.env
+.env.venv/
