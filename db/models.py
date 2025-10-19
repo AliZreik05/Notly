@@ -25,6 +25,7 @@ class User(Base):
     notes = relationship("Note", back_populates="owner")
     quizes = relationship("Quiz", back_populates="owner")
     flashcards = relationship("FlashCards", back_populates="owner")
+    transcriptions = relationship("Transcription", back_populates="owner")
     
 
 class Note(Base):
@@ -84,4 +85,18 @@ class ExamQuestion(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     exam = relationship("Exam", back_populates="questions")
+
+
+class Transcription(Base):
+    __tablename__ = "transcriptions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String(255), nullable=False)
+    text = Column(Text, nullable=True)
+    duration = Column(float, nullable=True)
+    word_count = Column(Integer, nullable=True)
+    status = Column(Enum("pending", "completed", "failed"), nullable=False, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    owner = relationship("User", back_populates="transcriptions")
 
