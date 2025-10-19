@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum, Text, JSON,Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum, Text, JSON, Float
 from sqlalchemy.orm import relationship
 import enum
 from db.sessions import Base
@@ -16,17 +16,17 @@ class ExamSource(str, enum.Enum):
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    firstName = Column(String(255),nullable=False)
-    lastName = Column(String(255),nullable=False)
+    firstName = Column(String(255), nullable=False)
+    lastName = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     notes = relationship("Note", back_populates="owner")
-    quizes = relationship("Quiz", back_populates="owner")
-    flashcards = relationship("FlashCards", back_populates="owner")
+    quizes = relationship("Exam", back_populates="owner")           # keep name as-is
+    flashcards = relationship("FlashCard", back_populates="owner")  # FIX: class name & back_populates
     transcriptions = relationship("Transcription", back_populates="owner")
-    
+
 
 class Note(Base):
     __tablename__ = "notes"
@@ -38,6 +38,7 @@ class Note(Base):
 
     owner = relationship("User", back_populates="notes")
 
+
 class FlashCardDeck(Base):
     __tablename__ = "flashcard_deck"
     id = Column(Integer, primary_key=True, index=True)
@@ -47,7 +48,8 @@ class FlashCardDeck(Base):
     source_id = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    cards = relationship("Flashcard", back_populates="set", cascade="all, delete")
+    cards = relationship("FlashCard", back_populates="set", cascade="all, delete")  # FIX: class name
+
 
 class FlashCard(Base):
     __tablename__ = "flashcard"
@@ -58,7 +60,9 @@ class FlashCard(Base):
     prompt = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
 
-    set = relationship("FlashcardSet", back_populates="cards")
+    set = relationship("FlashCardDeck", back_populates="cards")  # FIX: class name
+    owner = relationship("User", back_populates="flashcards")    # FIX: counterpart for User.flashcards
+
 
 class Exam(Base):
     __tablename__ = "exam"
@@ -71,13 +75,15 @@ class Exam(Base):
     source_id = Column(Integer, nullable=True)
 
     questions = relationship("ExamQuestion", back_populates="exam", cascade="all, delete")
+    owner = relationship("User", back_populates="quizes")  # FIX: counterpart for User.quizes
+
 
 class ExamQuestion(Base):
     __tablename__ = "examQuestion"
     id = Column(Integer, primary_key=True, index=True)
     exam_id = Column(Integer, ForeignKey("exam.id"), index=True, nullable=False)
     question = Column(Text, nullable=False)
-    options = Column(JSON, nullable=False)  
+    options = Column(JSON, nullable=False)
     answer_idx = Column(Integer, nullable=False)
     points = Column(Integer, default=1)
     order = Column(Integer, nullable=True)
@@ -99,4 +105,3 @@ class Transcription(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     owner = relationship("User", back_populates="transcriptions")
-
