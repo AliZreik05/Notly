@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum, Text, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum, Text, JSON,Float
 from sqlalchemy.orm import relationship
 import enum
 from db.sessions import Base
@@ -93,7 +93,7 @@ class Transcription(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     title = Column(String(255), nullable=False)
     text = Column(Text, nullable=True)
-    duration = Column(float, nullable=True)
+    duration = Column(Float, nullable=True)
     word_count = Column(Integer, nullable=True)
     status = Column(Enum("pending", "completed", "failed"), nullable=False, default="pending")
     created_at = Column(DateTime(timezone=True), server_default=func.now())

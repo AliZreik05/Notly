@@ -1,8 +1,8 @@
-import openai
+import openai 
 from fastapi import UploadFile, HTTPException, status
 from sqlalchemy.orm import Session
 from db.models import Transcription as TranscriptionModel
-from schemas.transcription_schema import TranscriptionCreate, TranscriptionStatus
+from Schemas.transcription_schema import TranscriptionCreate, TranscriptionStatus
 import os
 from dotenv import load_dotenv
 
