@@ -1,10 +1,21 @@
-.DS_Store
-Thumbs.db
-
+# --- Python & FastAPI ignores ---
 __pycache__/
+*.pyc
 
-notlybackend/
+# --- Virtual environment ---
+.venv/
 
-__pypackages__/
+# --- Local environment variables ---
+.env
 
-.env.venv/
+# --- Local SQLite databases ---
+*.db
+
+# --- OS & IDE junk ---
+.DS_Store
+.idea/
+.vscode/
+
+# --- Other temp files ---
+*.log
+*.tmp
