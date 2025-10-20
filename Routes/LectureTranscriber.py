@@ -25,3 +25,7 @@ async def transcribe_audio(
     """
     transcription = await create_transcription(db=db, file=file, title=title)
     return {"status": "success", "transcription": transcription}
+
+@router.get("/")
+def ping_transcriber():
+    return {"message": "LectureTranscriber endpoint is live"}
