@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Enum, Text, JSON, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Text, JSON, Float
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Enum as SAEnum
 import enum
 from db.sessions import Base
 
@@ -12,6 +14,11 @@ class ExamSource(str, enum.Enum):
     note = "note"
     transcript = "transcript"
     manual = "manual"
+
+class TranscriptionStatus(str, enum.Enum):
+    pending = "pending"
+    completed = "completed"
+    failed = "failed"
 
 class User(Base):
     __tablename__ = "users"
@@ -44,7 +51,7 @@ class FlashCardDeck(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     title = Column(String(255), nullable=False)
-    source_type = Column(Enum(SourceType), nullable=False)
+    source_type = Column(SAEnum(SourceType, name="source_type", native_enum=True), nullable=False)
     source_id = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -71,7 +78,7 @@ class Exam(Base):
     grade = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     title = Column(String(255), nullable=False)
-    source_type = Column(Enum(ExamSource), nullable=False)
+    source_type = Column(SAEnum(ExamSource, name="exam_source", native_enum=True), nullable=False)
     source_id = Column(Integer, nullable=True)
 
     questions = relationship("ExamQuestion", back_populates="exam", cascade="all, delete")
@@ -83,7 +90,7 @@ class ExamQuestion(Base):
     id = Column(Integer, primary_key=True, index=True)
     exam_id = Column(Integer, ForeignKey("exam.id"), index=True, nullable=False)
     question = Column(Text, nullable=False)
-    options = Column(JSON, nullable=False)
+    options = Column(JSONB, nullable=False) 
     answer_idx = Column(Integer, nullable=False)
     points = Column(Integer, default=1)
     order = Column(Integer, nullable=True)
@@ -101,7 +108,11 @@ class Transcription(Base):
     text = Column(Text, nullable=True)
     duration = Column(Float, nullable=True)
     word_count = Column(Integer, nullable=True)
-    status = Column(Enum("pending", "completed", "failed"), nullable=False, default="pending")
+    status = Column(
+    SAEnum(TranscriptionStatus, name="transcription_status", native_enum=True),
+    nullable=False,
+    server_default="pending",
+)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     owner = relationship("User", back_populates="transcriptions")
