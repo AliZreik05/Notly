@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from db.sessions import get_db
-from Models import Note      # wherever Note model lives
-from Schemas.lecture import LectureOut
+from db.models import Note
+from Schemas.Lecture import LectureOut
 
 router = APIRouter(prefix="/lectures", tags=["lectures"])
 
