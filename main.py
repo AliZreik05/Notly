@@ -11,6 +11,7 @@ from Routes.FlashCardGenerator import router as flash_router
 from Routes.LectureTranscriber import router as lecture_router
 from Routes.NotesSummarizer import router as notes_router
 from Routes.Lecture import router as lecture_router
+from Routes.History import router as history_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,3 +31,4 @@ app.include_router(flash_router)
 app.include_router(lecture_router)
 app.include_router(notes_router)
 app.include_router(lecture_router)
+app.include_router(history_router)
