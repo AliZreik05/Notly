@@ -1,5 +1,3 @@
-# routers/exam.py
-
 from typing import List, Dict, Optional
 from datetime import datetime
 
@@ -12,8 +10,6 @@ from db.models import Exam, ExamQuestion, ExamSource
 
 router = APIRouter(prefix="/exam", tags=["exam"])
 
-
-# ---------- Schemas ----------
 
 class ExamQuestionOut(BaseModel):
     id: int
@@ -30,7 +26,7 @@ class ExamDetail(BaseModel):
     title: str
     created_at: datetime
     grade: Optional[int] = None
-    source_type: str
+    source_type: str                 # 👈 string, not ExamSource
     source_id: Optional[int] = None
     questions: List[ExamQuestionOut]
 
@@ -39,7 +35,6 @@ class ExamDetail(BaseModel):
 
 
 class GradeRequest(BaseModel):
-    # answers: { question_id: chosen_option_index }
     answers: Dict[int, int]
 
 
@@ -54,21 +49,15 @@ class GradeResult(BaseModel):
     exam_id: int
     total_questions: int
     correct: int
-    grade: int        # same as correct (you can change later)
+    grade: int
     details: List[QuestionResult]
 
-
-# ---------- Get full exam with questions ----------
 
 @router.get("/{exam_id}", response_model=ExamDetail)
 def get_exam(
     exam_id: int,
     db: Session = Depends(get_db),
 ):
-    """
-    Fetch a single exam + all its questions.
-    (User filter removed for now - you can re-add when auth is real.)
-    """
     exam = (
         db.query(Exam)
         .filter(Exam.id == exam_id)
@@ -81,29 +70,20 @@ def get_exam(
     return exam
 
 
-# ---------- Grade exam ----------
-
 @router.post("/{exam_id}/grade", response_model=GradeResult)
 def grade_exam(
     exam_id: int,
     payload: GradeRequest,
-    user_id: int,
     db: Session = Depends(get_db),
 ):
-    """
-    Grade an exam:
-    - compares user's answers to correct indices
-    - updates Exam.grade in DB (as number of correct answers)
-    - returns detailed grading result
-    """
     exam = (
         db.query(Exam)
-        .filter(Exam.id == exam_id, Exam.user_id == user_id)
+        .filter(Exam.id == exam_id)
         .first()
     )
 
     if not exam:
-        raise HTTPException(status_code=404, detail="Exam not found for this user")
+        raise HTTPException(status_code=404, detail="Exam not found")
 
     questions = (
         db.query(ExamQuestion)
@@ -137,6 +117,7 @@ def grade_exam(
             )
         )
 
+    # store grade + details in DB
     exam.grade = correct_count
     exam.result_details = [d.dict() for d in details]
     db.add(exam)
@@ -151,27 +132,25 @@ def grade_exam(
         details=details,
     )
 
+
 @router.get("/{exam_id}/result", response_model=GradeResult)
 def get_exam_result(
     exam_id: int,
-    user_id: int,
     db: Session = Depends(get_db),
 ):
     exam = (
         db.query(Exam)
-        .filter(Exam.id == exam_id, Exam.user_id == user_id)
+        .filter(Exam.id == exam_id)
         .first()
     )
 
     if not exam:
-        raise HTTPException(status_code=404, detail="Exam not found for this user")
+        raise HTTPException(status_code=404, detail="Exam not found")
 
     if not exam.result_details:
         raise HTTPException(status_code=404, detail="No stored result for this exam")
 
-    # if result_details is JSON column:
-    details_data = exam.result_details
-    # if stored as Text: details_data = json.loads(exam.result_details)
+    details_data = exam.result_details  # JSON column
 
     details = [QuestionResult(**item) for item in details_data]
 
