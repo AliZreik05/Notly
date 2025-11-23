@@ -63,23 +63,21 @@ class GradeResult(BaseModel):
 @router.get("/{exam_id}", response_model=ExamDetail)
 def get_exam(
     exam_id: int,
-    user_id: int,
     db: Session = Depends(get_db),
 ):
     """
-    Fetch a single exam + all its questions for a given user.
-    Used when user opens a quiz from history or right after creation.
+    Fetch a single exam + all its questions.
+    (User filter removed for now - you can re-add when auth is real.)
     """
     exam = (
         db.query(Exam)
-        .filter(Exam.id == exam_id, Exam.user_id == user_id)
+        .filter(Exam.id == exam_id)
         .first()
     )
 
     if not exam:
-        raise HTTPException(status_code=404, detail="Exam not found for this user")
+        raise HTTPException(status_code=404, detail="Exam not found")
 
-    # questions are loaded via relationship exam.questions
     return exam
 
 
