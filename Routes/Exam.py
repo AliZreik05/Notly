@@ -140,6 +140,7 @@ def grade_exam(
         )
 
     exam.grade = correct_count
+    exam.result_details = [d.dict() for d in details]
     db.add(exam)
     db.commit()
     db.refresh(exam)
@@ -149,5 +150,37 @@ def grade_exam(
         total_questions=total,
         correct=correct_count,
         grade=correct_count,
+        details=details,
+    )
+
+@router.get("/{exam_id}/result", response_model=GradeResult)
+def get_exam_result(
+    exam_id: int,
+    user_id: int,
+    db: Session = Depends(get_db),
+):
+    exam = (
+        db.query(Exam)
+        .filter(Exam.id == exam_id, Exam.user_id == user_id)
+        .first()
+    )
+
+    if not exam:
+        raise HTTPException(status_code=404, detail="Exam not found for this user")
+
+    if not exam.result_details:
+        raise HTTPException(status_code=404, detail="No stored result for this exam")
+
+    # if result_details is JSON column:
+    details_data = exam.result_details
+    # if stored as Text: details_data = json.loads(exam.result_details)
+
+    details = [QuestionResult(**item) for item in details_data]
+
+    return GradeResult(
+        exam_id=exam.id,
+        total_questions=len(details),
+        correct=exam.grade or 0,
+        grade=exam.grade or 0,
         details=details,
     )

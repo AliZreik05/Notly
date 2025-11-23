@@ -80,6 +80,7 @@ class Exam(Base):
     title = Column(String(255), nullable=False)
     source_type = Column(SAEnum(ExamSource, name="exam_source", native_enum=True), nullable=False)
     source_id = Column(Integer, nullable=True)
+    result_details = Column(JSON, nullable=True)
 
     questions = relationship("ExamQuestion", back_populates="exam", cascade="all, delete")
     owner = relationship("User", back_populates="quizes")  # FIX: counterpart for User.quizes
