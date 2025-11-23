@@ -30,7 +30,7 @@ class ExamDetail(BaseModel):
     title: str
     created_at: datetime
     grade: Optional[int] = None
-    source_type: ExamSource
+    source_type: str
     source_id: Optional[int] = None
     questions: List[ExamQuestionOut]
 
