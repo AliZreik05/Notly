@@ -34,4 +34,4 @@ app.include_router(lecture_router)
 app.include_router(notes_router)
 app.include_router(lecture_router)
 app.include_router(history_router)
-app.include_router
+app.include_router(exam_router)
