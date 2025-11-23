@@ -71,66 +71,46 @@ def get_exam(
 
 
 @router.post("/{exam_id}/grade", response_model=GradeResult)
-def grade_exam(
-    exam_id: int,
-    payload: GradeRequest,
-    db: Session = Depends(get_db),
-):
-    exam = (
-        db.query(Exam)
-        .filter(Exam.id == exam_id)
-        .first()
-    )
-
+def grade_exam(exam_id: int, payload: GradeRequest, user_id: int, db: Session = Depends(get_db)):
+    exam = db.query(Exam).filter(Exam.id == exam_id, Exam.user_id == user_id).first()
     if not exam:
-        raise HTTPException(status_code=404, detail="Exam not found")
+        raise HTTPException(status_code=404, detail="Exam not found for this user")
 
-    questions = (
-        db.query(ExamQuestion)
-        .filter(ExamQuestion.exam_id == exam.id)
-        .order_by(ExamQuestion.order.asc().nullsfirst())
-        .all()
-    )
+    questions = db.query(ExamQuestion).filter(ExamQuestion.exam_id == exam.id).all()
 
-    if not questions:
-        raise HTTPException(status_code=400, detail="Exam has no questions")
-
-    answers = payload.answers  # {question_id: user_index}
-
-    total = len(questions)
+    answers = payload.answers
     correct_count = 0
-    details: List[QuestionResult] = []
+    details = []
 
     for q in questions:
         user_idx = answers.get(q.id)
-        is_correct = (user_idx is not None and user_idx == q.answer_idx)
-
+        is_correct = user_idx is not None and user_idx == q.answer_idx
         if is_correct:
             correct_count += 1
 
-        details.append(
-            QuestionResult(
-                question_id=q.id,
-                correct_index=q.answer_idx,
-                user_index=user_idx,
-                is_correct=is_correct,
-            )
-        )
+        details.append({
+            "question_id": q.id,
+            "correct_index": q.answer_idx,
+            "user_index": user_idx,
+            "is_correct": is_correct
+        })
 
-    # store grade + details in DB
+    # 🔥 Save both grade + details
     exam.grade = correct_count
-    exam.result_details = [d.dict() for d in details]
+    exam.result_details = details
+
     db.add(exam)
     db.commit()
     db.refresh(exam)
 
-    return GradeResult(
-        exam_id=exam.id,
-        total_questions=total,
-        correct=correct_count,
-        grade=correct_count,
-        details=details,
-    )
+    return {
+        "exam_id": exam.id,
+        "total_questions": len(questions),
+        "correct": correct_count,
+        "grade": correct_count,
+        "details": details
+    }
+
 
 
 @router.get("/{exam_id}/result", response_model=GradeResult)
