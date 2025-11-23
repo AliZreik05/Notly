@@ -12,6 +12,8 @@ from Routes.LectureTranscriber import router as lecture_router
 from Routes.NotesSummarizer import router as notes_router
 from Routes.Lecture import router as lecture_router
 from Routes.History import router as history_router
+from Routes.ai import router as ai_router
+from Routes.Exam import router as exam_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,7 +23,7 @@ async def lifespan(app: FastAPI):
     print("Application is shutting down")
 
 app = FastAPI(lifespan=lifespan)
-
+app.include_router(ai_router)
 app.include_router(home_router)
 app.include_router(signup_router)
 app.include_router(signout_router)
@@ -32,3 +34,4 @@ app.include_router(lecture_router)
 app.include_router(notes_router)
 app.include_router(lecture_router)
 app.include_router(history_router)
+app.include_router
