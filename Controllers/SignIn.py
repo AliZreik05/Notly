@@ -61,5 +61,6 @@ def signin_user(payload: UserLogin, db: Session) -> SignInResponse:
     return SignInResponse(
         access_token=token,
         token_type="bearer",
+        user_id=user.id,
         message="Login successful",
     )

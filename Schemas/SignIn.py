@@ -10,4 +10,5 @@ class SignInResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     message: str = "Login successful"
+    user_id: int
     model_config = ConfigDict(from_attributes=True)
