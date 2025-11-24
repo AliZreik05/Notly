@@ -41,7 +41,7 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
     hashed_password = pwd_context.hash(payload.newPassword)
 
     # 4. Store it
-    user.password = hashed_password
+    user.password_hash =  hashed_password
     db.commit()
 
     return {"message": "Password has been reset successfully!"}
