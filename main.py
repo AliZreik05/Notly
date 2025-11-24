@@ -14,6 +14,7 @@ from Routes.Lecture import router as lecture_router
 from Routes.History import router as history_router
 from Routes.ai import router as ai_router
 from Routes.Exam import router as exam_router
+from Routes.password import router as password_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,3 +36,4 @@ app.include_router(notes_router)
 app.include_router(lecture_router)
 app.include_router(history_router)
 app.include_router(exam_router)
+app.include_router(password_router)
