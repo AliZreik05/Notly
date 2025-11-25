@@ -1,5 +1,13 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
+# Ensure media directories exist before mounting static files. Some PaaS
+# environments (like Render) don't persist empty directories from the repo,
+# so creating them here prevents a startup error when FastAPI mounts /media.
+media_root = Path("media")
+media_root.mkdir(parents=True, exist_ok=True)
+(media_root / "transcriptions").mkdir(parents=True, exist_ok=True)
 from contextlib import asynccontextmanager
 from db.sessions import engine, Base
 
