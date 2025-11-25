@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Enum as SAEnum
 import enum
 from db.sessions import Base
+from uuid import uuid4
 
 class SourceType(str, enum.Enum):
     note = "note"
@@ -16,9 +17,10 @@ class ExamSource(str, enum.Enum):
     manual = "manual"
 
 class TranscriptionStatus(str, enum.Enum):
-    pending = "pending"
-    completed = "completed"
-    failed = "failed"
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
 class User(Base):
     __tablename__ = "users"
@@ -103,17 +105,23 @@ class ExamQuestion(Base):
 
 class Transcription(Base):
     __tablename__ = "transcriptions"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    id = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid4()))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     title = Column(String(255), nullable=False)
-    text = Column(Text, nullable=True)
-    duration = Column(Float, nullable=True)
+    course_name = Column(String(255), nullable=True)
+    audio_url = Column(String(512), nullable=False)
+    audio_path = Column(String(1024), nullable=False)
+    transcript_text = Column(Text, nullable=True)
+    summary_text = Column(Text, nullable=True)
+    duration_seconds = Column(Integer, nullable=True)
     word_count = Column(Integer, nullable=True)
     status = Column(
-    SAEnum(TranscriptionStatus, name="transcription_status", native_enum=True),
-    nullable=False,
-    server_default="pending",
-)
+        SAEnum(TranscriptionStatus, name="transcription_status", native_enum=True),
+        nullable=False,
+        server_default=TranscriptionStatus.PENDING.value,
+    )
+    error_message = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     owner = relationship("User", back_populates="transcriptions")

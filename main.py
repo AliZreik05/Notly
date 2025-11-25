@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from db.sessions import engine, Base
 
@@ -8,7 +9,7 @@ from Routes.SignOut import router as signout_router
 from Routes.SignIn import router as signin_router
 from Routes.QuizGenerator import router as quiz_router
 from Routes.FlashCardGenerator import router as flash_router
-from Routes.LectureTranscriber import router as lecture_router
+from Routes.LectureTranscriber import router as transcription_router
 from Routes.NotesSummarizer import router as notes_router
 from Routes.Lecture import router as lecture_router
 from Routes.History import router as history_router
@@ -24,6 +25,7 @@ async def lifespan(app: FastAPI):
     print("Application is shutting down")
 
 app = FastAPI(lifespan=lifespan)
+app.mount("/media", StaticFiles(directory="media"), name="media")
 app.include_router(ai_router)
 app.include_router(home_router)
 app.include_router(signup_router)
@@ -31,7 +33,7 @@ app.include_router(signout_router)
 app.include_router(signin_router)
 app.include_router(quiz_router)
 app.include_router(flash_router)
-app.include_router(lecture_router)
+app.include_router(transcription_router)
 app.include_router(notes_router)
 app.include_router(lecture_router)
 app.include_router(history_router)

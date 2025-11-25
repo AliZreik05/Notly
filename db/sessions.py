@@ -7,7 +7,7 @@ load_dotenv()
 class Base(DeclarativeBase):
     pass
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./notly.db")
 
 engine = create_engine(
     DATABASE_URL,

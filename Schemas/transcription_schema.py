@@ -1,28 +1,46 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
 from typing import Optional
+from pydantic import BaseModel, Field
 import enum
 
+
 class TranscriptionStatus(str, enum.Enum):
-    PENDING = "pending"
-    COMPLETED = "completed"
-    FAILED = "failed"
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
-class TranscriptionBase(BaseModel):
-    title: str
-    duration: Optional[float] = None
+
+class TranscriptionUploadResponse(BaseModel):
+    id: str = Field(..., description="Public identifier for the transcription job")
+    status: TranscriptionStatus
+
+
+class TranscriptionHistoryItem(BaseModel):
+    id: str
+    course: Optional[str] = None
     word_count: Optional[int] = None
-    status: TranscriptionStatus = TranscriptionStatus.PENDING
+    created_at: datetime
+    duration: Optional[str] = Field(
+        default=None, description="HH:MM:SS formatted audio duration"
+    )
+    status: TranscriptionStatus
 
-class TranscriptionCreate(TranscriptionBase):
-    pass
 
-class Transcription(TranscriptionBase):
-    id: int
-    text: str
+class TranscriptionDetail(BaseModel):
+    id: str
+    title: str
+    course_name: Optional[str] = None
+    audio_url: str
+    transcript_text: Optional[str] = None
+    summary_text: Optional[str] = None
+    duration_seconds: Optional[int] = None
+    duration: Optional[str] = None
+    word_count: Optional[int] = None
+    status: TranscriptionStatus
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    error_message: Optional[str] = None
 
     class Config:
-        orm_mode = True
-
-class TranscriptionResponse(BaseModel):
-    status: str
-    transcription: Optional[Transcription] = None
+        from_attributes = True
