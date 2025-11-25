@@ -20,4 +20,6 @@ RUN mkdir -p /app/media/transcriptions
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Use shell form so environment variable substitution works (Render sets $PORT)
+# Default to 8000 when PORT is not provided.
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --reload
