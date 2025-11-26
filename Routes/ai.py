@@ -49,16 +49,6 @@ class FlashcardAIRequest(BaseModel):
     num_cards: int = 20
     title: Optional[str] = None
 
-class FlashcardItem(BaseModel):
-    id: int
-    front: str
-    back: str
-
-class FlashcardDeckOut(BaseModel):
-    deck_id: int
-    title: str
-    cards: List[FlashcardItem]
-
 
 # ---------- Summarize Endpoint ----------
 
@@ -373,69 +363,3 @@ Text:
             for c in saved_cards
         ],
     }
-
-
-# ---------- Flashcard Fetch Endpoints ----------
-
-@router.get("/flashcards/{deck_id}", response_model=FlashcardDeckOut)
-def get_flashcard_deck(deck_id: int, user_id: int, db: Session = Depends(get_db)):
-    """
-    Fetch a saved flashcard deck (with cards) by deck_id for the given user.
-    """
-    deck = (
-        db.query(FlashCardDeck)
-        .filter(FlashCardDeck.id == deck_id, FlashCardDeck.user_id == user_id)
-        .first()
-    )
-    if not deck:
-        raise HTTPException(status_code=404, detail="Deck not found for this user")
-
-    cards = (
-        db.query(FlashCard)
-        .filter(FlashCard.set_id == deck.id)
-        .order_by(FlashCard.id.asc())
-        .all()
-    )
-
-    return FlashcardDeckOut(
-        deck_id=deck.id,
-        title=deck.title,
-        cards=[
-            FlashcardItem(
-                id=c.id,
-                front=c.prompt,
-                back=c.answer,
-            ) for c in cards
-        ],
-    )
-
-
-@router.get("/flashcards", response_model=List[FlashcardDeckOut])
-def list_flashcard_decks(user_id: int, db: Session = Depends(get_db)):
-    """
-    List all flashcard decks (with cards) for the given user.
-    """
-    decks = db.query(FlashCardDeck).filter(FlashCardDeck.user_id == user_id).all()
-    result: List[FlashcardDeckOut] = []
-
-    for deck in decks:
-        cards = (
-            db.query(FlashCard)
-            .filter(FlashCard.set_id == deck.id)
-            .order_by(FlashCard.id.asc())
-            .all()
-        )
-        result.append(
-            FlashcardDeckOut(
-                deck_id=deck.id,
-                title=deck.title,
-                cards=[
-                    FlashcardItem(
-                        id=c.id,
-                        front=c.prompt,
-                        back=c.answer,
-                    ) for c in cards
-                ],
-            )
-        )
-    return result
